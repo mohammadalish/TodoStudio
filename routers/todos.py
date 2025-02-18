@@ -10,7 +10,12 @@ from fastapi.responses import RedirectResponse
 from schemas import TodoRequest
 from passlib.context import CryptContext
 from typing import Annotated
-from database import SessionLocal, get_db, db_dependency
+from database import (
+    SessionLocal,
+    get_db,
+    db_dependency
+)
+from models import Todos
 
 router = APIRouter(prefix="/todo", tags=["Todos"])
 
