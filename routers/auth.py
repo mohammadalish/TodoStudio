@@ -1,15 +1,21 @@
+from turtle import st
+from typing import Annotated
+from xmlrpc.client import TRANSPORT_ERROR
 from fastapi import (
     APIRouter,
+    HTTPException,
     status,
 )
-from schemas import CreateUserRequest, UserResponse
-from passlib.context import CryptContext
+from utils.auth_utils import (
+    authenticate_user,
+    bcrypt_context,
+    auth_dependency
+)
 from models import Users
 from database import get_db, db_dependency
+from schemas import CreateUserRequest, UserResponse
 
 router = APIRouter(prefix="/auth", tags=["Athentication"],)
-
-bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -29,3 +35,21 @@ async def create_user(
     db.commit()
     db.refresh(create_user_model)
     return create_user_model
+
+
+@router.post("/token", status_code=status.HTTP_201_CREATED)
+async def login_for_access_token(
+    form_data: auth_dependency,
+    db: db_dependency
+):
+    authenticated_user = authenticate_user(
+        username=form_data.username,
+        password=form_data.password,)
+
+    if not authenticated_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return authenticated_user
