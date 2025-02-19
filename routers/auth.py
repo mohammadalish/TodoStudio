@@ -1,6 +1,5 @@
-from turtle import st
+
 from typing import Annotated
-from xmlrpc.client import TRANSPORT_ERROR
 from fastapi import (
     APIRouter,
     HTTPException,
