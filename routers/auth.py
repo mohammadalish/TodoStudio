@@ -9,6 +9,7 @@ from utils.auth_utils import (
     auth_dependency,
     create_access_token,
     ACCESS_TOKEN_EXPIRE_MINUTES as atem,
+    get_password_hash,
 )
 from models import Users
 from database import db_dependency
@@ -45,9 +46,10 @@ async def login_for_access_token(
     db: db_dependency
 ):
     user = authenticate_user(
+        db=db,
         username=form_data.username,
         password=form_data.password,
-        db=db)
+    )
 
     if not user:
         raise HTTPException(
@@ -61,3 +63,23 @@ async def login_for_access_token(
         "access_token": token,
         "token_type": "bearer"
     }
+
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
+async def register_user(
+    user_data: CreateUserRequest, db: db_dependency
+):
+    """Registers a new user with a hashed password."""
+    if db.query(Users).filter(Users.username == user_data.username).first():
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    new_user = Users(
+        username=user_data.username,
+        hashed_password=get_password_hash(user_data.password)
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {"message": "User created successfully"}
