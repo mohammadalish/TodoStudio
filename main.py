@@ -1,22 +1,12 @@
 from fastapi import (
     FastAPI,
-    Request,
-    Depends,
-    Path,
-    HTTPException,
-    status
+
 )
 from fastapi.responses import RedirectResponse
-from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
-from typing import Annotated
-from database import engine, SessionLocal
-from models import Base, Todos
+from database import engine
+from models import Base
 from routers import auth, todos
 
-import signal
-import os
-import logging
 
 app = FastAPI(
     title="TODOS",

@@ -1,5 +1,3 @@
-from datetime import timedelta
-from typing import Annotated
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -13,7 +11,7 @@ from utils.auth_utils import (
     ACCESS_TOKEN_EXPIRE_MINUTES as atem,
 )
 from models import Users
-from database import get_db, db_dependency
+from database import db_dependency
 from schemas import (CreateUserRequest, UserResponse, Token)
 
 router = APIRouter(prefix="/auth", tags=["Athentication"],)

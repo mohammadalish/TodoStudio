@@ -6,8 +6,7 @@ from fastapi import (
 )
 from schemas import TodoRequest
 from database import (
-    SessionLocal,
-    get_db,
+
     db_dependency
 )
 from models import Todos
