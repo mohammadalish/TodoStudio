@@ -31,14 +31,3 @@ class Todos(Base):
     description = Column(String, index=True)
     complete = Column(Boolean, default=False, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-
-
-# class Projects(Base):
-#     __tablename__ = "projects"
-
-#     id = Column(Integer, primary_key=True, index=True)
-#     name = Column(String, index=True)
-#     description = Column(String, index=True)
-#     start_date = Column(DateTime, default=datetime.utcnow)
-#     end_date = Column(DateTime, nullable=True)
-#     owner_id = Column(Integer, ForeignKey("users.id"))
