@@ -13,6 +13,7 @@ from typing import Annotated
 from database import engine, SessionLocal
 from models import Base, Todos
 from routers import auth, todos
+
 import signal
 import os
 import logging
@@ -21,6 +22,7 @@ app = FastAPI(
     title="TODOS",
     description="You can access Todo API(s) from here",
     version="1.0.0",
+    debug=True,
 )
 
 

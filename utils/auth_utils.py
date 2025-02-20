@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import Depends
 from models import Users
 from passlib.context import CryptContext
@@ -21,14 +21,14 @@ def authenticate_user(username: str, password: str, db):
 auth_dependency = Annotated[LoginForm, Depends()]
 
 # JWT
-SECTER_KEY = "04fe417dedfd59a08cb1f3aec290f852c9b878068cc5fc514b815e9fa21acbc8"
+SECRET_KEY = "04fe417dedfd59a08cb1f3aec290f852c9b878068cc5fc514b815e9fa21acbc8"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 20
 
 
 def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     encode = {"sub": username, "id": user_id}
-    expires = datetime.now(datetime.timezone.utc) + expires_delta
+    expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
-    token = jwt.encode(encode, SECTER_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
     return token

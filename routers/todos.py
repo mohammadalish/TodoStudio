@@ -30,7 +30,7 @@ async def read_single_todo(db: db_dependency, todo_id: int = Path(gt=0)):
     )
 
 
-@router.post("/todo", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_single_todo(db: db_dependency, todo_request: TodoRequest):
     todo_model = Todos(**todo_request.model_dump())
     db.add(todo_model)
@@ -53,6 +53,7 @@ async def update_single_todo(db: db_dependency, todo_id: int, todo_request: Todo
     todo_model.complete = todo_request.complete
 
     db.commit()
+    db.refresh(todo_model)
 # delete request method
 
 
@@ -66,3 +67,4 @@ async def delete_single_todo(db: db_dependency, todo_id: int):
         )
     db.delete(todo_model)
     db.commit()
+    db.refresh(todo_model)

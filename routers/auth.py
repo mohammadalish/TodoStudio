@@ -20,7 +20,7 @@ router = APIRouter(prefix="/auth", tags=["Athentication"],)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(
+async def create_single_user(
     db: db_dependency, create_user_request: CreateUserRequest
 ) -> UserResponse:
     create_user_model = Users(
@@ -48,7 +48,8 @@ async def login_for_access_token(
 ):
     user = authenticate_user(
         username=form_data.username,
-        password=form_data.password,)
+        password=form_data.password,
+        db=db)
 
     if not user:
         raise HTTPException(
