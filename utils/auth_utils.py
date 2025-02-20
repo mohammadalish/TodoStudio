@@ -1,13 +1,14 @@
-from datetime import datetime, timedelta, timezone
-from fastapi import Depends
-from models import Users
-from sqlalchemy.orm import Session
+from typing import Annotated
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm as LoginForm
-from jose import jwt
-from typing import Annotated
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from models import Users
 
+# Dependencies
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Functions
 
 
 def get_password_hash(password: str):
@@ -31,20 +32,3 @@ def authenticate_user(db: Session, username: str, password: str):
 
 
 auth_dependency = Annotated[LoginForm, Depends()]
-
-# JWT
-SECRET_KEY = "04fe417dedfd59a08cb1f3aec290f852c9b878068cc5fc514b815e9fa21acbc8"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 20
-
-
-def create_access_token(username: str, user_id: int, expires_delta: int):
-    """Creates a JWT token with expiration."""
-    encode = {"sub": username, "id": user_id}
-
-    # Ensure expires_delta is converted to timedelta
-    expires = datetime.now(timezone.utc) + timedelta(minutes=expires_delta)
-
-    encode.update({"exp": expires})
-    token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
-    return token
