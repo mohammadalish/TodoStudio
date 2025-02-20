@@ -4,5 +4,6 @@ landfill.py
 __pycache__/
 todosapp.db
 tree.txt
+output.txt
 .venv/
 .venv-fastapi/

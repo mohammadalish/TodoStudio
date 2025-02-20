@@ -1,15 +1,10 @@
 from fastapi import (
     APIRouter,
-    Request,
-    Depends,
     Path,
     HTTPException,
     status
 )
-from fastapi.responses import RedirectResponse
 from schemas import TodoRequest
-from passlib.context import CryptContext
-from typing import Annotated
 from database import (
     SessionLocal,
     get_db,

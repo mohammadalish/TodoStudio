@@ -1,4 +1,4 @@
-
+from datetime import timedelta
 from typing import Annotated
 from fastapi import (
     APIRouter,
@@ -8,11 +8,13 @@ from fastapi import (
 from utils.auth_utils import (
     authenticate_user,
     bcrypt_context,
-    auth_dependency
+    auth_dependency,
+    create_access_token,
+    ACCESS_TOKEN_EXPIRE_MINUTES as atem,
 )
 from models import Users
 from database import get_db, db_dependency
-from schemas import CreateUserRequest, UserResponse
+from schemas import (CreateUserRequest, UserResponse, Token)
 
 router = APIRouter(prefix="/auth", tags=["Athentication"],)
 
@@ -36,19 +38,27 @@ async def create_user(
     return create_user_model
 
 
-@router.post("/token", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/token", status_code=status.HTTP_201_CREATED,
+    response_model=Token
+)
 async def login_for_access_token(
     form_data: auth_dependency,
     db: db_dependency
 ):
-    authenticated_user = authenticate_user(
+    user = authenticate_user(
         username=form_data.username,
         password=form_data.password,)
 
-    if not authenticated_user:
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return authenticated_user
+    token = create_access_token(
+        username=user.username, user_id=user.id, expires_delta=atem)
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
