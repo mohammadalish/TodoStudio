@@ -7,3 +7,4 @@ tree.txt
 output.txt
 .venv/
 .venv-fastapi/
+users.json

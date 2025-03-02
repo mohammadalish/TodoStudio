@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from fastapi.security import (OAuth2PasswordRequestForm as LoginForm,
                               OAuth2PasswordBearer as Bearer)
 from jose import jwt, JWTError
-from typing import Annotated
+from typing import Annotated, Dict
 from models import Users
 
 # Dependencies
@@ -30,12 +30,18 @@ async def get_current_user(token: bearer_dependency):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not VALIDATE credentials",
             )
+        return {
+            "username": username,
+            "user_id": user_id,
+        }
+
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not VALIDATE credentials",
         )
-    return
+        return
+user_dependency = Annotated[Dict, Depends(get_current_user)]
 
 
 def get_password_hash(password: str):

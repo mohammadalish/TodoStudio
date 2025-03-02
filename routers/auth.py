@@ -15,7 +15,11 @@ from utils.token_utils import (
 )
 from models import Users
 from database import db_dependency
-from schemas import (CreateUserRequest, UserResponse, Token)
+from schemas import (
+    CreateUserRequest,
+    UserResponse,
+    Token
+)
 
 router = APIRouter(prefix="/auth", tags=["Athentication"],)
 

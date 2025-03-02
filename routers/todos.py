@@ -6,10 +6,13 @@ from fastapi import (
 )
 from schemas import TodoRequest
 from database import (
-
     db_dependency
 )
+from utils.token_utils import (
+    user_dependency
+)
 from models import Todos
+
 
 router = APIRouter(prefix="/todo", tags=["Todos"])
 
@@ -30,8 +33,19 @@ async def read_single_todo(db: db_dependency, todo_id: int = Path(gt=0)):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_single_todo(db: db_dependency, todo_request: TodoRequest):
-    todo_model = Todos(**todo_request.model_dump())
+async def create_single_todo(
+    user: user_dependency, db: db_dependency, todo_request: TodoRequest
+):
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication failed."
+        )
+
+    todo_model = Todos(
+        **todo_request.model_dump(),
+        owner_id=user.get("id"))
     db.add(todo_model)
     db.commit()
     db.refresh(todo_model)
@@ -53,6 +67,7 @@ async def update_single_todo(db: db_dependency, todo_id: int, todo_request: Todo
 
     db.commit()
     db.refresh(todo_model)
+
 # delete request method
 
 
