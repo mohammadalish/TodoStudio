@@ -7,9 +7,11 @@ from utils.auth_utils import (
     authenticate_user,
     bcrypt_context,
     auth_dependency,
+    get_password_hash,
+)
+from utils.token_utils import (
     create_access_token,
     ACCESS_TOKEN_EXPIRE_MINUTES as atem,
-    get_password_hash,
 )
 from models import Users
 from database import db_dependency
